@@ -1,0 +1,28 @@
+case $facts['os']['release'] {
+    '6':  {
+            package {'ntp':
+			          ensure => installed,
+            }
+			      file {'/etc/sysconfig/ntpd':
+			         ensure  => present,
+			         content => ''OPTIONS="-u ntpd"'',
+			      }
+			      service {'ntpd':
+			         ensure => running,
+               enable => true,
+		        }
+         }
+    '7':  {
+            package {'ntp':
+			         ensure => installed,
+            }
+			      file {'/etc/sysconfig/chronyd':
+			         ensure  => present,
+			         content => ''OPTIONS="-u chronyd"'',
+			      }
+			      service {'ntp':
+			         ensure => running,
+               enable => true,
+            }
+    
+}
