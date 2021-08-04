@@ -1,0 +1,49 @@
+## Install Apache
+package {'httpd':
+         ensure => installed,
+		}
+# Edit the main Apache configuration file to adjust the resource use settings.
+file {'/etc/httpd/conf/httpd.conf':
+         ensure => present,
+		 content => '<IfModule prefork.c> 
+						StartServers        4 
+						MinSpareServers     20 
+						MaxSpareServers     40 
+						MaxClients          200 
+						MaxRequestsPerChild 4500 
+					</IfModule>'
+      }					
+# Configure Apache for Virtual Hosting
+file {'/etc/httpd/conf.d/vhost.conf':
+         ensure => present,
+         content => '<VirtualHost *:80> 
+						ServerAdmin admin@example.org 
+						ServerName example.org 
+						ServerAlias www.example.org 
+						DocumentRoot /srv/www/example.org/public_html/ 
+						ErrorLog /srv/www/example.org/logs/error.log 
+						CustomLog /srv/www/example.org/logs/access.log combined 
+					</VirtualHost>'
+
+# Create the directories referenced above:
+file {'/srv/www/example.org/public_html':
+            ensure => directory,
+     }
+file {'/srv/www/example.org/logs':
+            ensure => directory,
+     }
+
+# Start Apache:
+service {'httpd':
+           ensure => running,
+           enable => true,
+        }
+
+# Install Apache Modules
+
+# Install Support for Scripting
+$pkg-array = ['mod_perl','mod_wsgi','php','php-pear']
+		   
+package { $pkg-array: 
+            ensure => 'installed' 
+		}
